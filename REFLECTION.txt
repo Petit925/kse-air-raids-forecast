@@ -1,0 +1,5 @@
+What went wrong. First pass used MAPE and ran only on Kyiv City — but Kyiv City has many zero-alert days, so MAPE was undefined or exploded, and the single region hid that sparse vs dense series behave very differently. The figure-saving code also overwrote outputs when I ran a second region.
+
+How I adjusted. Switched the metric to SMAPE (bounded, defined on zero days), added Dnipropetrovska oblast as a frontline contrast, and refactored every artifact path to be suffixed by a region slug so reruns are non-destructive.
+
+Why the final is better. Honest evaluation across two volume regimes shows Prophet beats the seasonal-naive baseline by ~30% MAE on the sparse capital series and ~19% on the dense frontline series — and exposes that weekly seasonality is weak while intra-day pattern is strong, which is the actual finding worth shipping.

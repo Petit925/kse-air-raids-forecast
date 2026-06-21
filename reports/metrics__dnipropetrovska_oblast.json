@@ -1,0 +1,19 @@
+{
+  "baseline_seasonal_naive_7d": {
+    "mae": 3.642857142857143,
+    "rmse": 4.621378891320518,
+    "smape_pct": 30.001694268790757
+  },
+  "prophet": {
+    "mae": 2.942592993728535,
+    "rmse": 3.8272245953075803,
+    "smape_pct": 25.4496608543389
+  },
+  "test_window": {
+    "start": "2026-06-08",
+    "end": "2026-06-21",
+    "n_days": 14,
+    "mean_actual": 13.071428571428571
+  },
+  "region": "Dnipropetrovska oblast"
+}
