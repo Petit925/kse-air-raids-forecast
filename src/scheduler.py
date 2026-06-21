@@ -30,9 +30,17 @@ class CurfewWindow:
     start_hour: int = 0
     end_hour: int = 5
 
+    def is_in_curfew(self, hour: int) -> bool:
+        """True if `hour` falls inside the curfew window. Handles wrap-around
+        midnight (e.g. start=22, end=6 means 22:00–06:00 next day)."""
+        if self.end_hour > self.start_hour:
+            return self.start_hour <= hour < self.end_hour
+        # wraps past midnight
+        return hour >= self.start_hour or hour < self.end_hour
+
     def allowed_hours(self) -> list[int]:
         """The hours (0..23) when work IS allowed."""
-        return [h for h in range(24) if not (self.start_hour <= h < self.end_hour)]
+        return [h for h in range(24) if not self.is_in_curfew(h)]
 
 
 def hourly_distribution(df_region: pd.DataFrame) -> np.ndarray:

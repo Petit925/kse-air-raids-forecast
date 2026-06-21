@@ -275,7 +275,7 @@ with tab_schedule:
             "hour": np.arange(24),
             "expected_alerts": hourly,
             "in_block": [(start_h <= h < end_h) for h in range(24)],
-            "in_curfew": [(curfew.start_hour <= h < curfew.end_hour) for h in range(24)],
+            "in_curfew": [curfew.is_in_curfew(h) for h in range(24)],
         })
         df_h["bucket"] = np.where(
             df_h["in_curfew"], "🌙 комендантська",

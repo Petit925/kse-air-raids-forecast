@@ -7,16 +7,16 @@ Mini pet-project for KSE AI Agentic Summer School (Stage 2).
 
 ## What's in here
 
-1. **Static report** — `report.html`. Self-contained, no install required — just open it. **This is what an external reviewer should look at first.** Pre-rendered for 3 contrasting regions (Kyiv City, Dnipropetrovska, Kharkivska).
+1. **Interactive static report** — `report.html`. Self-contained, no install required — just open it. Has the **same UX as the Streamlit dashboard** (sidebar with region/curfew/window controls, three tabs, KPI cards, charts, schedule), but everything is pre-computed for all 25 regions and the scheduler runs client-side in JavaScript. **This is what an external reviewer should look at first.**
 2. **Pipeline** — `src/` modules + `python -m src.main` for offline backtest and metrics.
-3. **Interactive dashboard** — `app.py` (Streamlit) with 3 tabs: history overview, +7-day forecast, optimal work-schedule. Region/curfew/window-length are user-controlled.
+3. **Interactive dashboard** — `app.py` (Streamlit) — same UX, real Python runtime, useful for development.
 4. **Launchers (Windows, one click)** —
    - `start_dashboard.bat` — opens the interactive Streamlit app in your browser.
    - `build_report.bat` — regenerates `report.html` from current data.
 
 ```
-zero-install reviewer        →  double-click report.html  →  read
-interactive demo / owner     →  double-click start_dashboard.bat  →  pick region & curfew
+zero-install reviewer        →  double-click report.html  →  pick region & curfew → read
+developer / live demo        →  double-click start_dashboard.bat  →  http://localhost:8501
 ```
 
 ---
