@@ -1,13 +1,12 @@
 @echo off
-REM 🛡️ Air Raid Workforce Planner — one-click launcher
-REM Double-click this file. It will open the dashboard in your default browser.
-cd /d %~dp0
+chcp 65001 > nul
+cd /d "%~dp0"
 echo.
 echo ============================================================
-echo   Air Raid Workforce Planner — starting Streamlit
-echo   When ready, your browser will open automatically.
-echo   To stop: close this window or press Ctrl+C.
+echo   Air Raid Workforce Planner - starting Streamlit
+echo   Browser will open at http://localhost:8501
+echo   To stop: close this window or press Ctrl+C
 echo ============================================================
 echo.
-.venv\Scripts\streamlit.exe run app.py --server.headless false --browser.gatherUsageStats false
+".venv\Scripts\streamlit.exe" run app.py --server.headless=false --browser.gatherUsageStats=false
 pause
