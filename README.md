@@ -1,10 +1,19 @@
-# Ukraine Air-Raid Alerts — 7-Day Forecast
+# 🛡️ Ukraine Air-Raid Alerts — Forecast & Workforce Planner
 
 Mini pet-project for KSE AI Agentic Summer School (Stage 2).
-**Task:** time-series analysis and short-horizon forecast of daily air-raid alert counts in Ukraine.
-**Defense framing:** civil-defense planning (shifts, civil-protection staffing, shelter logistics) benefits from a credible 1-week-ahead alert-volume forecast per oblast.
+**Task:** time-series analysis and short-horizon forecast of daily air-raid alert counts in Ukraine, plus an operational layer that turns the forecast into a 7-day work schedule for a critical-infrastructure / civil-defense team.
 
 > Author: galabitskiy@gmail.com · 2026-06-21
+
+## What's in here
+
+1. **Pipeline** — `src/` modules + `python -m src.main` for offline backtest and metrics.
+2. **Dashboard** — `app.py` (Streamlit) with 3 tabs: history overview, +7-day forecast, optimal work-schedule.
+3. **One-click launcher** — `start_dashboard.bat` (Windows) opens the dashboard in your browser.
+
+```
+double-click start_dashboard.bat  →  http://localhost:8501  →  pick region & curfew  →  read your week
+```
 
 ---
 
@@ -73,7 +82,7 @@ Prophet beats the seasonal-naive baseline on every metric in every region. Impro
 - **Strong intra-day pattern.** Alert *starts* peak around 10:00–15:00 Europe/Kyiv local and bottom out at 04:00–06:00. This is invisible at the daily aggregation we forecast; it would matter if we forecasted hourly.
 - **The SMAPE gap is the story.** ~25% on a frontline oblast vs ~103% on the capital. Sparse series are genuinely hard — most days have 0 or 1 alert, so any small absolute error is huge in percentage terms. Honest reporting matters here; an MAPE-only table would have looked terrible.
 
-## Reproduce
+## Reproduce — backtest pipeline
 
 ```bash
 python -m venv .venv
@@ -91,6 +100,35 @@ Artifacts land in `reports/`:
 - `forecast_next_7d__<region>.csv` — point + interval forecast
 - `figures/*__<region>.png` — EDA + backtest plots
 
+## Dashboard — `app.py`
+
+```bash
+streamlit run app.py
+# or just double-click start_dashboard.bat on Windows
+```
+
+Three tabs:
+
+1. **📊 Огляд історії** — KPI cards, daily series with 28-day rolling mean, weekday and hour-of-day distributions, year/month heatmap.
+2. **🔮 Прогноз +7 днів** — Prophet forward forecast with 80% uncertainty band, weekday-labelled table.
+3. **📅 Графік роботи на тиждень** — for each of the next 7 days, the dashboard finds the contiguous **9-hour work block** (8h work + 1h lunch) that minimises expected employee-exposure to air-raid alerts, subject to a configurable **curfew** (default 00:00–05:00). Each day shows a 24-hour bar chart with the curfew (black), chosen work block (green), and out-of-block hours (grey). Schedule is downloadable as CSV.
+
+### How the schedule algorithm works (defense-scenario framing)
+
+For every day `d` in the forecast:
+1. Take the Prophet point forecast `yhat[d]` (expected alerts that day).
+2. Take the historical hour-of-day probability distribution `p[h]` for the region (sums to 1, computed from the full dataset).
+3. Compute expected alerts per hour: `e[h, d] = yhat[d] · p[h]`.
+4. Among all 9-hour contiguous windows that fit *entirely inside the curfew-allowed range*, pick the one minimising `sum(e[h, d] for h in window)`.
+
+This is a transparent grid search (16 candidate windows max per day) — easy to inspect, easy to defend in an interview, no opaque optimiser. The "vs naive %" column shows how much exposure is reduced compared to a manager who picked the work block uniformly at random across the 24-hour day.
+
+**What this model does NOT capture** (stated honestly in the dashboard):
+- Commute exposure before/after the block.
+- Same-shift consistency across days (each day is optimised independently — actual deployments would want a smoothing constraint).
+- Day-specific deviations from the historical hourly pattern.
+- Sudden regime shifts (e.g. a new drone-strike campaign that arrives mid-week).
+
 ## Layout
 
 ```
@@ -99,7 +137,10 @@ src/
   eda.py         daily / weekday / hourly figures
   baseline.py    seasonal-naive(7d)
   forecast.py    Prophet fit + predict + metrics (MAE/RMSE/SMAPE)
+  scheduler.py   optimal 9h work-window finder with curfew constraint
   main.py        end-to-end pipeline runner
+app.py             Streamlit dashboard (history / forecast / schedule)
+start_dashboard.bat  one-click Windows launcher
 data/raw/        volunteer_data_en.csv
 data/processed/  daily counts per region
 reports/         metrics, forecasts, figures

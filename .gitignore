@@ -5,3 +5,7 @@ __pycache__/
 .DS_Store
 .vscode/
 .idea/
+streamlit.log
+streamlit.err
+.playwright-mcp/
+dashboard-*.png
