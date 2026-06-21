@@ -7,12 +7,16 @@ Mini pet-project for KSE AI Agentic Summer School (Stage 2).
 
 ## What's in here
 
-1. **Pipeline** — `src/` modules + `python -m src.main` for offline backtest and metrics.
-2. **Dashboard** — `app.py` (Streamlit) with 3 tabs: history overview, +7-day forecast, optimal work-schedule.
-3. **One-click launcher** — `start_dashboard.bat` (Windows) opens the dashboard in your browser.
+1. **Static report** — `report.html`. Self-contained, no install required — just open it. **This is what an external reviewer should look at first.** Pre-rendered for 3 contrasting regions (Kyiv City, Dnipropetrovska, Kharkivska).
+2. **Pipeline** — `src/` modules + `python -m src.main` for offline backtest and metrics.
+3. **Interactive dashboard** — `app.py` (Streamlit) with 3 tabs: history overview, +7-day forecast, optimal work-schedule. Region/curfew/window-length are user-controlled.
+4. **Launchers (Windows, one click)** —
+   - `start_dashboard.bat` — opens the interactive Streamlit app in your browser.
+   - `build_report.bat` — regenerates `report.html` from current data.
 
 ```
-double-click start_dashboard.bat  →  http://localhost:8501  →  pick region & curfew  →  read your week
+zero-install reviewer        →  double-click report.html  →  read
+interactive demo / owner     →  double-click start_dashboard.bat  →  pick region & curfew
 ```
 
 ---
@@ -133,17 +137,20 @@ This is a transparent grid search (16 candidate windows max per day) — easy to
 
 ```
 src/
-  load_data.py   pandas loader + region filter + daily aggregation (UTC → Europe/Kyiv)
-  eda.py         daily / weekday / hourly figures
-  baseline.py    seasonal-naive(7d)
-  forecast.py    Prophet fit + predict + metrics (MAE/RMSE/SMAPE)
-  scheduler.py   optimal 9h work-window finder with curfew constraint
-  main.py        end-to-end pipeline runner
-app.py             Streamlit dashboard (history / forecast / schedule)
-start_dashboard.bat  one-click Windows launcher
-data/raw/        volunteer_data_en.csv
-data/processed/  daily counts per region
-reports/         metrics, forecasts, figures
+  load_data.py    pandas loader + region filter + daily aggregation (UTC → Europe/Kyiv)
+  eda.py          daily / weekday / hourly figures
+  baseline.py     seasonal-naive(7d)
+  forecast.py     Prophet fit + predict + metrics (MAE/RMSE/SMAPE)
+  scheduler.py    optimal 9h work-window finder with curfew constraint
+  build_report.py self-contained static HTML generator
+  main.py         end-to-end backtest pipeline runner
+app.py              Streamlit dashboard (history / forecast / schedule)
+report.html         pre-rendered static report (open directly, no install)
+start_dashboard.bat one-click Windows launcher for the dashboard
+build_report.bat    one-click regenerate of report.html
+data/raw/           volunteer_data_en.csv
+data/processed/     daily counts per region
+reports/            metrics, forecasts, figures
 ```
 
 ## Limitations & honest next steps
